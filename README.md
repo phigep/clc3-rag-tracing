@@ -18,3 +18,12 @@ The architecture of our project is based on Kubernetis. We plan on operating the
 
 ## How does the high-level cloud architecture look like? Provide an architecture diagram. 
 ![Haystack Pipeline](https://github.com/user-attachments/assets/cf6e5b7f-f0c6-4bd6-ac79-82a8a82027ce)
+
+
+
+## Some Links for Research
+https://github.com/traceloop/openllmetry/tree/main
+https://medium.com/@ronen.schaffer/follow-the-trail-supercharging-vllm-with-opentelemetry-distributed-tracing-aa655229b46f
+https://docs.dynatrace.com/docs/analyze-explore-automate/dynatrace-for-ai-observability/sample-use-cases/self-service-ai-observability-tutorialhttps://haystack.deepset.ai/integrations/vllm
+https://docs.haystack.deepset.ai/docs/kubernetes
+https://haystack.deepset.ai/integrations/traceloop
