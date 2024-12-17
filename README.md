@@ -19,7 +19,76 @@ The architecture of our project is based on Kubernetis. We plan on operating the
 ## How does the high-level cloud architecture look like? Provide an architecture diagram. 
 ![Haystack Pipeline](https://github.com/user-attachments/assets/cf6e5b7f-f0c6-4bd6-ac79-82a8a82027ce)
 
+## Milestones  
+This section outlines the key milestones and their corresponding target completion dates.
 
+**Milestone 1:** Exploration and Setup *(November 24, 2024)*  
+- Conducted an initial brainstorming session via virtual call to explore Kubernetes, vLLM, Haystack, and vector databases.  
+- Created a preliminary architecture diagram on Canvas to outline the project’s high-level structure and components.  
+
+**Milestone 2:** Individual Research *(December 1, 2024)*  
+Each team member conducts individual research on their assigned components and writes a short summary to share with the team:  
+- **David:** Deep dive into vLLM and its integration capabilities with Kubernetes.  
+- **Philipp:** Research on Kubernetes deployment strategies and high-level architecture optimizations.  
+- **Max:** Study of Haystack pipelines and tracing solutions (e.g., OpenLLMetry) for monitoring query flow.  
+
+**Milestone 3:** Draft Proposal Submission *(December 15, 2024)*  
+- Consolidate research findings and finalize the architecture diagram for the proposal.  
+- Clearly define project goals, architecture, and components in the proposal.  
+- Submit the draft proposal by the deadline *(December 17, 2024)*.  
+
+**Milestone 4:** Component Prototyping *(January 10, 2025)*  
+- Begin hands-on prototyping for each component:  
+   - Set up a basic Kubernetes cluster in a cloud.  
+   - Deploy initial pods for the vLLM, Haystack Pipeline, and vector database.  
+   - Test components to identify potential issues.  
+
+**Milestone 5:** Integrating and Testing *(January 19, 2025)*  
+- Integrate all components with the Kubernetes cluster.  
+- Test communication between pods and query workflows end-to-end.  
+- Incorporate OpenLLMetry for tracing and monitoring.  
+
+**Milestone 6:** Final Presentation Preparation *(January 26, 2025)*  
+- Refine deployment, address issues that may have arisen during testing, and optimize the architecture for the final presentation.  
+- Prepare slides and documentation.  
+
+**Milestone 7:** Project Presentation *(February 3, 2025)*  
+- Deliver the final presentation.  
+
+## Contribution per Team Member  
+
+This section outlines the contributions of each team member to the project.
+
+### **Collaborative Tasks**  
+- All team members will research one major component during **Milestone 2** and participate in **integration testing** during **Milestone 5** to refine the architecture.  
+- Each member will provide insights for slides and documentation.  
+- Each member will participate in virtual progress check-ins to share updates and address issues.  
+- Each member will test and verify the **end-to-end functionality** of the deployed architecture and record issues and challenges (*Milestone 5*).  
+
+### **Individual Tasks**  
+
+#### **Max**  
+- Research and configure the **Haystack pipeline**.  
+- Integrate the Haystack pipeline with the **vector database** and **tracing tools** (e.g., OpenLLMetry).  
+- Focus on ensuring the **query flow** works seamlessly across all components.  
+- Document milestones and create slides for the **final presentation**.  
+   - Slides will showcase:  
+     - High-level goals and architecture.  
+     - Demonstration of the implemented system.  
+     - Challenges faced and solutions implemented.  
+     - Key learnings.  
+
+#### **David**  
+- Research and configure **vLLM** within a Kubernetes pod to simulate **OpenAI Mimic**.  
+- Collaborate with Philipp to integrate **vLLM** into the Haystack pipeline.  
+- Contribute to **integration testing** of vLLM with other pods.  
+- Provide input for the project **proposal**.  
+
+#### **Philipp**  
+- Design and configure the **high-level cloud architecture**.  
+- Set up and deploy the **Kubernetes cluster** on a cloud platform.  
+- Integrate all pods (**vLLM, Haystack pipeline, vector database, tracing tools**).  
+- Provide an **architecture diagram** and contribute to the high-level project goal in the proposal.  
 
 ## Some Links for Research
 https://github.com/traceloop/openllmetry/tree/main
