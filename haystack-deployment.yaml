@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: haystack-pipeline
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: haystack
+  template:
+    metadata:
+      labels:
+        app: haystack
+    spec:
+      containers:
+        - name: haystack
+          image: 127.0.0.1:31628/haystack-pipeline:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8000
+          env:
+            - name: ASTRA_DB_API_ENDPOINT
+              valueFrom:
+                secretKeyRef:
+                  name: astradb-secret
+                  key: ASTRA_DB_API_ENDPOINT
+            - name: ASTRA_DB_APPLICATION_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: astradb-secret
+                  key: ASTRA_DB_APPLICATION_TOKEN

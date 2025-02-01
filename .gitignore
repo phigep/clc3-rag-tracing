@@ -1,0 +1,21 @@
+# Virtuelle Environments
+astra_env/
+venv/
+.env/
+
+# Python-Cache-Dateien
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Jupyter-Notebook-Checkpoints
+.ipynb_checkpoints/
+
+# Konfigurations- und Secret-Dateien
+*.yaml
+*.env
+*.txt
+
+# Mac-spezifische Dateien
+.DS_Store
