@@ -1,19 +1,36 @@
-# clc3-rag-tracing
-This repo contains all the information and code for our semester project in cloud computing.
+# CLC3 Project: Traced RAG Pipeline on K8s
+This repository contains all the information and code for our semester project in cloud computing.
 
 ## What is the high-level goal of our project?
 The high level goal of our project is a retrieval-augmented generation pipeline (prototypical) that runs on kubernetes with included tracing of requests, retrieved contexts and generated answers. It should allow for local LLMs to be used (vLLM), which might help with scalability and security. 
-A scalable and understandable (tracing!) RAG pipeline helps in refining the retrieval **and** generation part. 
+A scalable and understandable (tracing!) RAG pipeline helps in refining the retrieval and generation part. 
+## Project Structure
+**src/backend** contains the API that is the final "product" and exposed to the outside. 
+The project root contains the deployment files (see below) as well as the Dockerfile that is used to build the image we use (phigep/haystack-pipeline). 
+
+We build a custom image for the python project instead of the hayhooks image. (Reasons see deployment). 
+
+The project itself uses **python 3.12 and uv** as pmanager. If new packages are added to this prototype during further implementation, a requirements.txt needs to be exportet from the pyproject.toml!  
 
 ## Cloud Architecture
 ![Haystack Pipeline](https://raw.githubusercontent.com/phigep/clc3-rag-tracing/refs/heads/main/architecture.png)
+The parts of our system are as follows:
+- Ollama Container that run an Ollama Server (https://ollama.com), which serves the used model.  
+- Rest API Container that runs a small exemplary RAG pipeline with Haystack (https://haystack.deepset.ai) with a single GET Call on a FASTAPI as entry point.
+  Uses the Ollama Model and the Weaviate SaaS database. Uses BM25 retrieval.  
+- Connection to SaaS Vector Database (Weaviate) and SaaS LLM tracing (OpenLLMetry) based on Opentelemetry. 
+
 
 ### Deployment Files
+Haystack recommends using hayhooks for deploying on K8s. However, this package has seen breaking changes in the recent past, is not particularly well documented (quite horribly tbh) and most importantly fails when trying to deploy Pipelines that contain pydantic models or **even some of haystacks own integrations (weaviate, ollama)**. 
+All that needs to be done to start is to supply your API keys in a secrets.yaml and the configmap.yaml. (And of course create a cluster for K8s /  setup minikube)
+
 - configmap.yaml --> Applies config maps
 - fastapi-deployment.yaml --> Deploys FastAPI app
-- jaeger-deployment.yaml --> Deploys Jaeger tracing
-- namespace.yaml --> Creates the Kubernetes namespace
+- jaeger-deployment.yaml --> Deploys Jaeger tracing (included in the project for future work, but right now not utilized or evaluated.)
+- namespace.yaml --> Creates the Kubernetes namespace "haystack-app"
 - ollama-deployment.yaml --> Deploys Ollama
+- run.sh -> shell script that runs the entire deployment, including indexing, serving the API and pulling any necessary models. 
 
 ## Implementation
 The implementation of Haystack and Ollama was done in a separate Kubernetes cluster to ensure flexibility, fault-resistance and logical separation of functionalities. The Weaviate and OpenLLMetry components operate in the cloud and have to be called outside the cluster.
