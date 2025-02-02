@@ -5,3 +5,4 @@ metadata:
   namespace: haystack-app
 data:
   WEAVIATE_URL: "https://unoysiymqho3qydpvd9edq.c0.europe-west3.gcp.weaviate.cloud"
+  OLLAMA_MODEL: "llama3.1"

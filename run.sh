@@ -8,7 +8,7 @@ IMAGE_NAME="phigep/haystack-pipeline"
 IMAGE_TAG="latest"
 OLLAMA_IMAGE="ollama/ollama:latest"
 NAMESPACE="haystack-app"
-OLLAMA_MODEL="qwen2:1.5B"
+OLLAMA_MODEL="llama3.1"
 
 echo "🚀 Starting Kubernetes Deployment for FastAPI, Ollama, OpenTelemetry & Jaeger..."
 
@@ -62,8 +62,17 @@ echo "🌍 http://ollama:11434"
 
 
 echo "🛠️ Pulling Ollama Model ($OLLAMA_MODEL) in the container..."
+
+# Get the pod name dynamically
 OLLAMA_POD=$(kubectl get pods -n $NAMESPACE -l app=ollama -o jsonpath='{.items[0].metadata.name}')
-echo ""
+
+# Check if the pod name was found
+if [ -z "$OLLAMA_POD" ]; then
+  echo "❌ Error: No Ollama pod found in namespace $NAMESPACE"
+  exit 1
+fi
+
+# Run the command inside the pod
 kubectl exec -n $NAMESPACE $OLLAMA_POD -- ollama pull $OLLAMA_MODEL
 
 echo "✅ Ollama Model ($OLLAMA_MODEL) is downloaded and ready!"

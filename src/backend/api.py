@@ -15,6 +15,19 @@ from traceloop.sdk import Traceloop
 
 Traceloop.init(app_name="haystack_app")
 
+#from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
+import os
+
+
+
+from opentelemetry import trace
+from opentelemetry.exporter import jaeger
+from opentelemetry.sdk.trace import TracerProvider
+from opentelemetry.sdk.trace.export import BatchExportSpanProcessor
+#TODO if time!
+
+
+
 
 # create pipeline and haystack stuff
 # use weaviate as db
@@ -72,19 +85,19 @@ class WrappedPipeline:
     run: object
 
 OLLAMA_URL = os.getenv("OLLAMA_BASE_URL", "http://host.containers.internal:11434") 
-
+MODEL_NAME = os.getenv("OLLAMA_MODEL", "llama3") 
 def get_ollama_generator(modelname):
     generator = OllamaGenerator(model=modelname,
                             url=OLLAMA_URL, 
                             generation_kwargs={
-                              "temperature": 0.1,
+                              "temperature": 0.3,
                               })
     return generator
 def get_openai_generator(model_name):
     llm = OpenAIGenerator(model=model_name,generation_kwargs={"temperature":0.0})
     return llm
 
-def get_simple_bm25_pipeline(document_store,prompt_template,generator=get_ollama_generator("qwen2:1.5B")):
+def get_simple_bm25_pipeline(document_store,prompt_template,generator=get_ollama_generator(MODEL_NAME)):
     retriever = WeaviateBM25Retriever(document_store=document_store)
     builder = PromptBuilder(template=prompt_template)
     p = Pipeline()
@@ -117,6 +130,7 @@ def index_docs():
 
 
 app = FastAPI()
+#FastAPIInstrumentor.instrument_app(app)
 # get response function
 @app.get("/ask_question")
 def get_answer(query):

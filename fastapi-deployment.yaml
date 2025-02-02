@@ -39,6 +39,11 @@ spec:
                 configMapKeyRef:
                   name: haystack-config
                   key: WEAVIATE_URL
+            - name: OLLAMA_MODEL
+              valueFrom:
+                configMapKeyRef:
+                  name: haystack-config
+                  key: OLLAMA_MODEL
             - name: OLLAMA_BASE_URL
               value: "http://ollama:11434"  # Internal Kubernetes service
 ---
