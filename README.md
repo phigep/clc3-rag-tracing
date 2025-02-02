@@ -23,6 +23,8 @@ The parts of our system are as follows:
 
 ### Deployment Files
 Haystack recommends using hayhooks for deploying on K8s. However, this package has seen breaking changes in the recent past, is not particularly well documented (quite horribly tbh) and most importantly fails when trying to deploy Pipelines that contain pydantic models or **even some of haystacks own integrations (weaviate, ollama)**. 
+We therefore opted to build the app from scratch by exporting and building on a python 3.12 base image, isntalling the required packages etc. This makes the build times a bit longer (few mins) but lead to a lot of flexibility. Everything can be configured in the deployment files and the run.sh script that is the entry point:
+
 All that needs to be done to start is to supply your API keys in a secrets.yaml and the configmap.yaml. (And of course create a cluster for K8s /  setup minikube)
 
 - configmap.yaml --> Applies config maps
@@ -35,7 +37,7 @@ All that needs to be done to start is to supply your API keys in a secrets.yaml 
 ## Implementation
 The implementation of Haystack and Ollama was done in a separate Kubernetes cluster to ensure flexibility, fault-resistance and logical separation of functionalities. The Weaviate and OpenLLMetry components operate in the cloud as SaaS and have to be called outside the cluster.
 
-### Step by step guide
+### Step by step guide to start app
 1. Create clusters and nodes (eg. on GKE)
 Create a cluster with nodes of at least the RAM requirement of the deployed Ollama Model + 2GB of overhead (recommend 8GB). No Need for GPU, although it speeds up calls by a lot.
 2. Create Weaviate and Traceloop account and retrieve keys
