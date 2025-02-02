@@ -12,5 +12,6 @@ dependencies = [
     "ipykernel>=6.29.5",
     "ollama-haystack>=2.3.0",
     "python-dotenv>=1.0.1",
+    "traceloop-sdk>=0.37.1",
     "weaviate-haystack>=4.0.2",
 ]

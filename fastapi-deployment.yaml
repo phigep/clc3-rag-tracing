@@ -29,6 +29,11 @@ spec:
                 secretKeyRef:
                   name: haystack-secrets
                   key: WEAVIATE_API_KEY
+            - name: TRACELOOP_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: haystack-secrets
+                  key: TRACELOOP_API_KEY
             - name: WEAVIATE_URL
               valueFrom:
                 configMapKeyRef:

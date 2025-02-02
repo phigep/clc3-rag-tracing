@@ -11,6 +11,11 @@ from haystack.components.builders.answer_builder import AnswerBuilder
 import os
 from fastapi import FastAPI, Request
 import sys
+from traceloop.sdk import Traceloop
+
+Traceloop.init(app_name="haystack_app")
+
+
 # create pipeline and haystack stuff
 # use weaviate as db
 # use Ollama server for inference
@@ -36,6 +41,7 @@ list_of_strings = [
     "Elizabeth has 76 of pineapples",
     "Henry has 60 of watermelons"
 ]
+
 docs = [Document(content=x) for i,x in enumerate(list_of_strings)]
 
 auth_client_secret = AuthApiKey()
