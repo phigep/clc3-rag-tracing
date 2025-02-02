@@ -46,7 +46,7 @@ Get the keys for the SaaS' we use. Paste in secrets.yml after b64 encoding them.
 Make sure that all the required keys, urls and other config such as modelname is set in the configmap.yml and secrets.yml files.
 4. Configure model and image name in run.sh
 modelname should fit the internal config value, can do by retrieving from env too. Fix this redundancy in future work.
-5. If changes occur in the environment, generate a requirements.txt for run.sh from pyproject.toml/uv.lock file
+5. If changes occur in the environment, it might be necessary to generate a requirements.txt for run.sh from pyproject.toml/uv.lock file if pyproject.toml directly isnt working for the install
 6. Call run.sh
 Optional for testing with external calls on API on a small streamlit GUI:
 7. Configure API URL in sample_app.py
