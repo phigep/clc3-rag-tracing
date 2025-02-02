@@ -30,32 +30,32 @@ All that needs to be done to start is to supply your API keys in a secrets.yaml 
 - jaeger-deployment.yaml --> Deploys Jaeger tracing (included in the project for future work, but right now not utilized or evaluated.)
 - namespace.yaml --> Creates the Kubernetes namespace "haystack-app"
 - ollama-deployment.yaml --> Deploys Ollama
-- run.sh -> shell script that runs the entire deployment, including indexing, serving the API and pulling any necessary models. 
+- **run.sh -> shell script that runs the entire deployment, including indexing, serving the API and pulling any necessary models. Certain Configs can be set at the top (such as Imagename and where to push/pull it, as well as model name (should be handled outside of shellscript in future implementation)** Port forwards for jaeger as well, this is part of future work/outlook. OpenLLmetry seems to suffice for our purposes for now. 
 
 ## Implementation
-The implementation of Haystack and Ollama was done in a separate Kubernetes cluster to ensure flexibility, fault-resistance and logical separation of functionalities. The Weaviate and OpenLLMetry components operate in the cloud and have to be called outside the cluster.
+The implementation of Haystack and Ollama was done in a separate Kubernetes cluster to ensure flexibility, fault-resistance and logical separation of functionalities. The Weaviate and OpenLLMetry components operate in the cloud as SaaS and have to be called outside the cluster.
 
 ### Step by step guide
-- Create clusters and nodes on GKE
-- Create Weaviate and Traceloop account and retreive keys
-- Configure secrets and keys
+1. Create clusters and nodes (eg. on GKE)
+Create a cluster with nodes of at least the RAM requirement of the deployed Ollama Model + 2GB of overhead (recommend 8GB). No Need for GPU, although it speeds up calls by a lot.
+2. Create Weaviate and Traceloop account and retrieve keys
+Get the keys for the SaaS' we use. Paste in secrets.yml after b64 encoding them. 
+3. Configure additional secrets and keys
+Make sure that all the required keys, urls and other config such as modelname is set in the configmap.yml and secrets.yml files.
 - Configure model and image name in run.sh
-- If changes occur in the environment, generate a requirements.txt for run.sh
+modelname should fit the internal config value, can do by retrieving from env too. Fix this redundancy in future work.
+- If changes occur in the environment, generate a requirements.txt for run.sh from pyproject.toml/uv.lock file
 - Call run.sh
+Optional for testing with external calls on API on a small streamlit GUI:
 - Configure API URL in sample_app.py
-- Execute streamlit run
+- Execute streamlit run sample.py
 
-### Haystack Setup
-The Haystack (https://haystack.deepset.ai/) setup in our Kubernetes deployment is designed to integrate seamlessly with FastAPI, Ollama, OpenLLMetry, and Jaeger for efficient retrieval-augmented generation (RAG). The deployment process begins by creating a dedicated Kubernetes namespace and applying necessary secrets and configuration maps. The core Haystack pipeline is containerized as a Docker image, which is built, pushed to DockerHub, and deployed in the cluster. The Ollama service is deployed alongside it to handle LLM-based responses. Once the deployments are up, they are restarted to pull the latest images, and the system waits for all services to become available. The setup also includes monitoring and tracing with Jaeger, accessible via port forwarding, ensuring full observability of the pipeline.
+### On Ollama
+The Ollama (https://ollama.com/) setup in our Kubernetes deployment is configured to run any given model as the primary LLM for the RAG pipeline, depending on available resources you have to choose an appropriate one. Ollama is containerized using the official ollama/ollama:latest image and deployed as a Kubernetes service (ollama-deployment.yaml). Once the deployment is active, the system pulls the specified model inside the running container to ensure it is available for inference (in the run.sh). The service is accessible within the cluster at http://ollama:11434, allowing seamless integration with Haystack for processing queries.
 
-### Ollama Setup
-The Ollama (https://ollama.com/) setup in our Kubernetes deployment is configured to run any given model as the primary LLM for the RAG pipeline. The deployment starts by creating a dedicated namespace and applying necessary secrets and configuration maps. Ollama is containerized using the official ollama/ollama:latest image and deployed as a Kubernetes service (ollama-deployment.yaml). Once the deployment is active, the system pulls the specified model inside the running container to ensure it is available for inference. The service is accessible within the cluster at http://ollama:11434, allowing seamless integration with Haystack for processing queries. Additionally, the deployment includes automated restarts to ensure the latest updates are applied and proper health checks to verify availability.
 
-### LLM Selection
-We selected the 1.5B Qwen model for our RAG-based Kubernetes setup due to its optimal balance between performance and resource efficiency. With a relatively small parameter size, it offers solid language understanding and generation capabilities while remaining lightweight enough for deployment in a containerized environment. This ensures efficient resource utilization, minimizing GPU and memory consumption without significantly sacrificing response quality. Additionally, Qwen’s architecture integrates well with our retrieval-augmented generation (RAG) pipeline, allowing for fast, contextually relevant responses. However, we are also cautious about the censorship mechanisms embedded in the model by the Chinese government, which introduce biases and restrict certain outputs. This concern requires careful evaluation and potential mitigations to ensure that the model aligns with our system’s requirements for open and unbiased information retrieval.
-
-### Vector Database Setup
-To provide the LLM with additional data, this system uses Weaviate (https://weaviate.io/) as a vector database. The additional information is stored as a list of strings, for example:
+### Vector Database Sample Data
+To provide the LLM with data, this system uses Weaviate (https://weaviate.io/) as a vector database. The additional information is stored as a list of strings, for example:
 
 `
 list_of_strings = [
@@ -70,9 +70,23 @@ By converting this list of strings into a list of document objects, Weaviate can
 `
 docs = [Document(content=x) for i,x in enumerate(list_of_strings)]
 `
+This is ofcourse only example content, both the database content and complexity of the pipeline need to be aapted for real world usecases.
 
 ### Tracing Setup
-The tracking service in our Kubernetes deployment is powered by OpenLLMetry (https://www.traceloop.com/docs/openllmetry/introduction), providing observability for the RAG pipeline. OpenLLMetry collects and exports telemetry data, including traces and metrics. OpenLLMetry instrumentation is integrated into the FastAPI and Haystack services to capture traces and logs automatically. This setup ensures real-time tracking, performance analysis, and debugging capabilities for the entire pipeline.
+The tracking service in our Kubernetes deployment is powered by OpenLLMetry (https://www.traceloop.com/docs/openllmetry/introduction), providing observability for the RAG pipeline. OpenLLMetry collects and exports telemetry data, including traces and metrics. OpenLLMetry instrumentation is integrated into the FastAPI and Haystack services to capture traces and logs automatically. It provides the following Insights:
+- A Dashboard that shows an overview of
+    - Models
+    - Price Total
+    - Dauily Cost
+    - Number Requests
+    - Tokens Amount that were used over time
+    - A Median Latency
+ 
+  it additionally allows to add further metrics on custom dashboards, depending on your traces.
+
+- A tracing tab that allows evaluaton of all spans that were captured, as well as a drill down intp specific spans with Token count, latency, timestamps and the model used.
+
+The following Results contain exemplary images of these views.
 
 ## Results
 As seen in the screenshots below, the FastAPI interface allows to send a specified query to the LLM which responds with a generated response suited to the given query. 
@@ -84,6 +98,21 @@ When asked a general question, as for the capital city of France, the LLM genera
 ![Results Vector DB Knowledge](https://raw.githubusercontent.com/phigep/clc3-rag-tracing/refs/heads/main/result-fruits.png)
 
 When asked a specific question regarding the information in the vector database, this information is retreived from the document objects, in order to generate a good response.
+
+### Tracing with OpenLLMetry
+
+**Dashboard**
+![image](https://github.com/user-attachments/assets/3fcf4e70-6087-4e49-96f3-df0c5822fe43)
+As previously mentioned, it shows an overview of relevant operational LLM/RAG metrics. As we only use ollama and local deployment, no costs are incurred for any SaaS models (openai, anthropic etc.)
+
+**Single Trace/Span**
+![image](https://github.com/user-attachments/assets/bd674ed5-e4d8-4094-aebf-4a35b5a0f497)
+
+With the following data on the LLMs:
+![image](https://github.com/user-attachments/assets/795f998c-bdbe-41fa-97aa-0da7bea4e9fe)
+
+
+
 
 
 
