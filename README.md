@@ -111,8 +111,27 @@ As previously mentioned, it shows an overview of relevant operational LLM/RAG me
 With the following data on the LLMs:
 ![image](https://github.com/user-attachments/assets/795f998c-bdbe-41fa-97aa-0da7bea4e9fe)
 
+This together with the details panel that shows duration of call etc, is enough to evaluate the performance of our RAG pipeline form an operational point of view. It allows for evaluation of different models, based on their speed and allows a non aggregated evaluation of quality, reasoning capabilities (with the answer). As an example we also show a contrasting run with deepseek-r1 style model based on qwen-2:
 
+![image](https://github.com/user-attachments/assets/bb7b7a8c-9f7c-41e7-840b-acab83de0729)
 
+As we can see, it takes much longer but also does some very impressive reasoning. it ignores useless context that was provided but also takes over 80s to generate an answer. 
+
+Note: Performance is not representative of a real use, as only CPU based inference was done to save credits on GCloud. 
+
+## Lessons Learned and Outlook
+The here shown prototype works well in limited scope but taught us a few lessons in terms of documentation quality and in particular potential issues when using a package that is quite new and limited. Although Haystack itself works quite well in local settings, when deploying it with the recommended way of using their custom hayhooks image and approach, inconsistencies across the integrations and documentation of examples set us up for failure. We therefore had to do a lot more from scratch for the RAG deployment itself, leaving us less time for the tracing. The tracing on the other hand is, based on OpenTelemetry -> OpenLLMetry incredibly simple to get started on a basic level. This was a very positive learning which will lead to (hopefully) an open approach to tracing for us. Keeping the image lightweight enough to rebuild often also was a learning. 
+
+We also learned that logging and kubectl logs command are your best friend when trying to debug the deployment, the immutable and readonly nature of how kubernetes pulls the images and rebuilds, forced us to solve problems at the root (our image), without any big changes to the deployed system. 
+
+Secrets and Configmap was also a critical learning, as multiple potentially costly API Keys can and are used for this project. We initially started with a .env file but quickly realized that this wont be an option for the actual deployment.
+
+### Outlook
+There are a lot of areas with room for improvement, we only name a few here. It has to e understood that this is a simple prototype using the most basic approaches to cut down on coding effort a bit.
+- RAG Pipeline: Improve on the basic Pipeline and present the RAG functionality as a tool call instead. Use Embedding and Hybrid Retrieval for better results.
+- Evaluation and Tracing: To the impressive and useful OpenLLMetry traces, add some custom tracing for e.g. RAG metrics on startup (RAGAS)
+- Deployment and Model Pulling: use a single point of truth that is configurable easy in the run.sh if possible for the modelname, or alternatively keep the future API flexible enough to choose the name. Right now there is some redundancy with the configmap name for the API and the model thats pulled in the run.sh script. Maybe Ollama has a setting that automatically pulls a model on first request.
+- Less SaaS: Weaviate can also be easily deployed on a Pod, this will however accrue additional costs, which we avoided with the free weaviate cloud version for now. 
 
 
 
