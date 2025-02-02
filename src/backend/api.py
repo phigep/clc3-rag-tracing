@@ -11,6 +11,24 @@ from haystack.components.builders.answer_builder import AnswerBuilder
 import os
 from fastapi import FastAPI, Request
 import sys
+from traceloop.sdk import Traceloop
+
+Traceloop.init(app_name="haystack_app")
+
+#from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
+import os
+
+
+
+from opentelemetry import trace
+from opentelemetry.exporter import jaeger
+from opentelemetry.sdk.trace import TracerProvider
+from opentelemetry.sdk.trace.export import BatchExportSpanProcessor
+#TODO if time!
+
+
+
+
 # create pipeline and haystack stuff
 # use weaviate as db
 # use Ollama server for inference
@@ -23,7 +41,7 @@ list_of_strings = [
     "Gabriel has 67 of strawberries",
     "Ava has 95 of bananas",
     "Julian has 62 of mangoes",
-    "Hannah has 29 of pineapples",
+    "Hannah has 0 of pineapples",
     "Lucas has 51 of watermelons",
     "Madeline has 18 of pears",
     "Oliver has 74 of apples",
@@ -36,6 +54,7 @@ list_of_strings = [
     "Elizabeth has 76 of pineapples",
     "Henry has 60 of watermelons"
 ]
+
 docs = [Document(content=x) for i,x in enumerate(list_of_strings)]
 
 auth_client_secret = AuthApiKey()
@@ -65,18 +84,20 @@ class WrappedPipeline:
     pipeline: Pipeline
     run: object
 
+OLLAMA_URL = os.getenv("OLLAMA_BASE_URL", "http://host.containers.internal:11434") 
+MODEL_NAME = os.getenv("OLLAMA_MODEL", "llama3") 
 def get_ollama_generator(modelname):
     generator = OllamaGenerator(model=modelname,
-                            url = "http://localhost:11434",
+                            url=OLLAMA_URL, 
                             generation_kwargs={
-                              "temperature": 0.1,
+                              "temperature": 0.3,
                               })
     return generator
 def get_openai_generator(model_name):
     llm = OpenAIGenerator(model=model_name,generation_kwargs={"temperature":0.0})
     return llm
 
-def get_simple_bm25_pipeline(document_store,prompt_template,generator=get_ollama_generator("llama3")):
+def get_simple_bm25_pipeline(document_store,prompt_template,generator=get_ollama_generator(MODEL_NAME)):
     retriever = WeaviateBM25Retriever(document_store=document_store)
     builder = PromptBuilder(template=prompt_template)
     p = Pipeline()
@@ -109,6 +130,7 @@ def index_docs():
 
 
 app = FastAPI()
+#FastAPIInstrumentor.instrument_app(app)
 # get response function
 @app.get("/ask_question")
 def get_answer(query):

@@ -1,0 +1,62 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: haystack-app
+  namespace: haystack-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: haystack-app
+  template:
+    metadata:
+      labels:
+        app: haystack-app
+    spec:
+      containers:
+        - name: haystack-app
+          image: phigep/haystack-pipeline:latest  # Change if hosted externally
+          ports:
+            - containerPort: 8000
+          env:
+            - name: OPENAI_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: haystack-secrets
+                  key: OPENAI_API_KEY
+            - name: WEAVIATE_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: haystack-secrets
+                  key: WEAVIATE_API_KEY
+            - name: TRACELOOP_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: haystack-secrets
+                  key: TRACELOOP_API_KEY
+            - name: WEAVIATE_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: haystack-config
+                  key: WEAVIATE_URL
+            - name: OLLAMA_MODEL
+              valueFrom:
+                configMapKeyRef:
+                  name: haystack-config
+                  key: OLLAMA_MODEL
+            - name: OLLAMA_BASE_URL
+              value: "http://ollama:11434"  # Internal Kubernetes service
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: haystack-app
+  namespace: haystack-app
+spec:
+  selector:
+    app: haystack-app
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8000
+  type: LoadBalancer  # Exposes externally

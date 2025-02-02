@@ -61,15 +61,6 @@ fastapi==0.115.8
     #   hayhooks
 fastapi-cli==0.0.7
     # via fastapi
-filelock==3.17.0
-    # via
-    #   huggingface-hub
-    #   torch
-    #   transformers
-fsspec==2024.12.0
-    # via
-    #   huggingface-hub
-    #   torch
 grpcio==1.70.0
     # via
     #   grpcio-health-checking
@@ -110,11 +101,6 @@ httpx==0.28.1
     #   ollama
     #   openai
     #   weaviate-client
-huggingface-hub==0.28.1
-    # via
-    #   sentence-transformers
-    #   tokenizers
-    #   transformers
 hyperframe==6.1.0
     # via h2
 idna==3.10
@@ -133,11 +119,8 @@ jinja2==3.1.5
     # via
     #   fastapi
     #   haystack-ai
-    #   torch
 jiter==0.8.2
     # via openai
-joblib==1.4.2
-    # via scikit-learn
 jupyter-client==8.6.3
     # via ipykernel
 jupyter-core==5.7.2
@@ -162,21 +145,14 @@ monotonic==1.6
     # via posthog
 more-itertools==10.6.0
     # via haystack-ai
-mpmath==1.3.0
-    # via sympy
 nest-asyncio==1.6.0
     # via ipykernel
 networkx==3.4.2
-    # via
-    #   haystack-ai
-    #   torch
+    # via haystack-ai
 numpy==2.2.2
     # via
     #   haystack-ai
     #   pandas
-    #   scikit-learn
-    #   scipy
-    #   transformers
 ollama==0.4.7
     # via ollama-haystack
 ollama-haystack==2.3.0
@@ -186,17 +162,13 @@ openai==1.61.0
 packaging==24.2
     # via
     #   deprecation
-    #   huggingface-hub
     #   ipykernel
-    #   transformers
 pandas==2.2.3
     # via haystack-ai
 parso==0.8.4
     # via jedi
 pexpect==4.9.0
     # via ipython
-pillow==11.1.0
-    # via sentence-transformers
 platformdirs==4.3.6
     # via jupyter-core
 posthog==3.11.0
@@ -253,42 +225,24 @@ pytz==2025.1
 pyyaml==6.0.2
     # via
     #   haystack-ai
-    #   huggingface-hub
-    #   transformers
     #   uvicorn
 pyzmq==26.2.1
     # via
     #   ipykernel
     #   jupyter-client
-regex==2024.11.6
-    # via transformers
 requests==2.32.3
     # via
     #   hayhooks
     #   haystack-ai
-    #   huggingface-hub
     #   posthog
-    #   transformers
 rich==13.9.4
     # via
     #   rich-toolkit
     #   typer
 rich-toolkit==0.13.2
     # via fastapi-cli
-safetensors==0.5.2
-    # via transformers
-scikit-learn==1.6.1
-    # via sentence-transformers
-scipy==1.15.1
-    # via
-    #   scikit-learn
-    #   sentence-transformers
-sentence-transformers==3.4.1
-    # via clc3-rag-tracing (pyproject.toml)
 setuptools==75.8.0
-    # via
-    #   grpcio-tools
-    #   torch
+    # via grpcio-tools
 shellingham==1.5.4
     # via typer
 six==1.17.0
@@ -303,18 +257,10 @@ stack-data==0.6.3
     # via ipython
 starlette==0.45.3
     # via fastapi
-sympy==1.13.1
-    # via torch
 tenacity==9.0.0
     # via haystack-ai
-threadpoolctl==3.5.0
-    # via scikit-learn
-tokenizers==0.21.0
-    # via transformers
 toml==0.10.2
     # via astrapy
-torch==2.6.0
-    # via sentence-transformers
 tornado==6.4.2
     # via
     #   ipykernel
@@ -322,10 +268,7 @@ tornado==6.4.2
 tqdm==4.67.1
     # via
     #   haystack-ai
-    #   huggingface-hub
     #   openai
-    #   sentence-transformers
-    #   transformers
 traitlets==5.14.3
     # via
     #   comm
@@ -334,8 +277,6 @@ traitlets==5.14.3
     #   jupyter-client
     #   jupyter-core
     #   matplotlib-inline
-transformers==4.48.2
-    # via sentence-transformers
 typer==0.15.1
     # via fastapi-cli
 typing-extensions==4.12.2
@@ -344,12 +285,10 @@ typing-extensions==4.12.2
     #   astra-haystack
     #   fastapi
     #   haystack-ai
-    #   huggingface-hub
     #   openai
     #   pydantic
     #   pydantic-core
     #   rich-toolkit
-    #   torch
     #   typer
 tzdata==2025.1
     # via pandas
