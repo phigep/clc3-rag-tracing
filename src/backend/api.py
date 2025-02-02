@@ -78,7 +78,7 @@ def get_openai_generator(model_name):
     llm = OpenAIGenerator(model=model_name,generation_kwargs={"temperature":0.0})
     return llm
 
-def get_simple_bm25_pipeline(document_store,prompt_template,generator=get_ollama_generator("llama3")):
+def get_simple_bm25_pipeline(document_store,prompt_template,generator=get_ollama_generator("qwen2:1.5B")):
     retriever = WeaviateBM25Retriever(document_store=document_store)
     builder = PromptBuilder(template=prompt_template)
     p = Pipeline()
