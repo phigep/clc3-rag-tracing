@@ -25,7 +25,7 @@ The parts of our system are as follows:
 Haystack recommends using hayhooks for deploying on K8s. However, this package has seen breaking changes in the recent past, is not particularly well documented (quite horribly tbh) and most importantly fails when trying to deploy pipelines containing pydantic models or **even some of haystacks own integrations (weaviate, ollama)**. 
 We therefore opted to build the app from scratch by exporting and building on a python 3.12 base image, isntalling the required packages etc. This makes the build times a bit longer (a few minutes) but lead to a lot of flexibility. Everything can be configured in the deployment files and the run.sh script that is the entry point:
 
-All that needs to be done to start is to supply your API keys in a secrets.yaml and the configmap.yaml. (And of course create a cluster for K8s / setup minikube)
+All that needs to be done to start is to supply your API keys in a secrets.yaml and the configmap.yaml. (And of course create a cluster for K8s / setup minikube) If Docker is used instead of podman, switch the podman command to docker build command.
 
 - configmap.yaml --> Applies config maps
 - fastapi-deployment.yaml --> Deploys FastAPI app
